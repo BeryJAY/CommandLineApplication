@@ -1,0 +1,63 @@
+import click
+import requests
+
+@click.group()
+def cli():
+        """
+        Trending stories is a news application 
+        that displays a list containing four news sources and gives a user a chance to select any preferred source.After the selection is made, another list of the top 10 headlines is displayed whereby each has a a title, description
+        and  URL in case the user wishes to follow up
+        """
+        pass
+
+@cli.command()
+def list_of_sources():
+    """
+    Displaying a list of the first four sources of news
+    """
+url = ('https://newsapi.org/v2/sources?apiKey=24224cf967964be8b4c5476c1c8f5f42')
+response = requests.get(url).json()
+data = response["sources"]
+result = []
+
+for g in data:
+    result.append(g['id'])
+
+
+for m in result[0:4]:
+        print(m)
+
+@cli.command()
+def make_choice():
+    """
+    Kindly choose the news source you want
+    """
+    choosing = click.prompt("Kindly enter the choice you have made")
+    headline_url = ('https://newsapi.org/v2/top-headlines?apiKey=24224cf967964be8b4c5476c1c8f5f42&sources=' + choosing)
+    response1 = requests.get(headline_url).json()
+    check = response["status"]
+    if check == "ok":
+            pass
+    elif check == "error":
+            print("There is an error")
+    else:
+            print("something went wrong")
+
+    data1 = response1['articles']
+
+    result1=[]
+    for headline in data1:
+            click.echo("\n")
+            click.secho("TITLE: " + headline["title"],fg="red")
+            click.secho("DESCRIPTION: " + headline["description"])
+            click.secho("THE LINK TO FOLLOW: " + headline["url"],fg="yellow")
+        
+#     for x in result1[:11]:
+#             print(x)
+    
+if __name__ == "__main__":
+    cli()
+    
+
+
+ 
